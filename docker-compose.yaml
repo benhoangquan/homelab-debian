@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    ports:
+      - "8080:8080"      # Web UI
+      - "6881:6881"      # Torrent port
+      - "6881:6881/udp"  # Torrent port UDP
+    volumes:
+      - qbittorrent-config:/config
+      - downloads:/downloads
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Toronto
+      - WEBUI_PORT=8080
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    environment:
+      - TZ=America/Toronto
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=yourStrongPasswordHere
+    restart: unless-stopped
+
+volumes:
+  qbittorrent-config:
+  downloads:
+  n8n-data:
